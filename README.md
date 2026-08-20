@@ -109,8 +109,8 @@ endmodule
 <img width="1600" height="879" alt="image" src="https://github.com/user-attachments/assets/2352c067-582b-4971-a742-eaeb4689321c" />
 
 # ROM
-// write verilog code for ROM using $random
-
+**// write verilog code for ROM using $random
+**
 module memory_4KB (
     input        clk,
     input        we,          // Write Enable
@@ -137,7 +137,9 @@ module memory_4KB (
     end
 
 endmodule
-// Test bench
+
+**// Test bench**
+
 `timescale 1ns/1ps
 
 module tb_memory_4KB;
@@ -225,7 +227,9 @@ module tb_memory_4KB;
 <img width="454" height="980" alt="image" src="https://github.com/user-attachments/assets/5bac7328-9f90-4cd1-afb9-daf8a01a1b02" />
 
 
-// output Waveform
+**// output Waveform**
+
+<img width="1600" height="880" alt="image" src="https://github.com/user-attachments/assets/75e0cf5a-797b-4da0-903b-a33c4bcfe013" />
 
 # FIFO
 // write verilog code for FIFO
