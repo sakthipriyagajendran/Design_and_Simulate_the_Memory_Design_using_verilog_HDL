@@ -111,7 +111,119 @@ endmodule
 # ROM
 // write verilog code for ROM using $random
 
+module memory_4KB (
+    input        clk,
+    input        we,          // Write Enable
+    input        re,          // Read Enable
+    input  [11:0] address,    // 12-bit address: 0 to 4095
+    input  [7:0]  data_in,    // 8-bit input data
+    output reg [7:0] data_out // 8-bit output data
+);
+
+    // 4 KB memory = 4096 locations × 8 bits
+    reg [7:0] memory [0:4095];
+
+    // Write operation
+    always @(posedge clk) begin
+        if (we)
+            memory[address] <= data_in;
+    end
+    // Read operation
+    always @(*) begin
+        if (re)
+            data_out = memory[address];
+        else
+            data_out = 8'bz;
+    end
+
+endmodule
 // Test bench
+`timescale 1ns/1ps
+
+module tb_memory_4KB;
+
+    reg        clk;
+    reg        we;
+    reg        re;
+    reg [11:0] address;
+    reg [7:0]  data_in;
+
+    wire [7:0] data_out;
+
+    // Instantiate DUT
+    memory_4KB DUT (
+        .clk      (clk),
+        .we       (we),
+        .re       (re),
+        .address  (address),
+        .data_in  (data_in),
+        .data_out (data_out)
+    );
+    // Clock generation
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
+
+    // Test procedure
+    initial begin
+
+        // Initialize signals
+        we      = 0;
+        re      = 0;
+        address = 12'd0;
+        data_in = 8'd0;
+         // -------------------------------
+        // WRITE OPERATION
+        // -------------------------------
+
+        // Write 55H into address 100
+        #10;
+        we      = 1;
+        address = 12'd100;
+        data_in = 8'h55;
+
+        #10;
+        we = 0;
+
+        // Write AAH into address 200
+        #10;
+        we      = 1;
+        address = 12'd200;
+        data_in = 8'hAA;
+
+        #10;
+        we = 0;
+        // Write FFH into last address
+        #10;
+        we      = 1;
+        address = 12'd4095;
+        data_in = 8'hFF;
+        #10;
+        we = 0;
+        // -------------------------------
+        // READ OPERATION
+        // -------------------------------
+        // Read address 100
+        #10;
+        re      = 1;
+        address = 12'd100;
+        #5;
+        $display("Address = %d, Data = %h", address, data_out);
+        // Disable read
+        #10;
+        re = 0;
+        #10;
+        $finish;
+    end
+    endmodule
+    <img width="1008" height="1025" alt="image" src="https://github.com/user-attachments/assets/3aa40f27-95dc-4167-b4e2-de32fd0306fa" />
+<img width="572" height="980" alt="image" src="https://github.com/user-attachments/assets/9f4898e9-f28b-47cc-8b7c-cef7a86468ab" />
+
+<img width="435" height="665" alt="image" src="https://github.com/user-attachments/assets/f633e589-6ed7-4860-83fc-c644f0e78ac3" />
+
+<img width="454" height="980" alt="image" src="https://github.com/user-attachments/assets/5bac7328-9f90-4cd1-afb9-daf8a01a1b02" />
+
 
 // output Waveform
 
