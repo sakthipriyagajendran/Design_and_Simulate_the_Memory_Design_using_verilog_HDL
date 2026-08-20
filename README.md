@@ -219,24 +219,145 @@ module tb_memory_4KB;
         $finish;
     end
     endmodule
-    <img width="1008" height="1025" alt="image" src="https://github.com/user-attachments/assets/3aa40f27-95dc-4167-b4e2-de32fd0306fa" />
-<img width="572" height="980" alt="image" src="https://github.com/user-attachments/assets/9f4898e9-f28b-47cc-8b7c-cef7a86468ab" />
-
-<img width="435" height="665" alt="image" src="https://github.com/user-attachments/assets/f633e589-6ed7-4860-83fc-c644f0e78ac3" />
-
-<img width="454" height="980" alt="image" src="https://github.com/user-attachments/assets/5bac7328-9f90-4cd1-afb9-daf8a01a1b02" />
-
-
+   
 **// output Waveform**
 
 <img width="1600" height="880" alt="image" src="https://github.com/user-attachments/assets/75e0cf5a-797b-4da0-903b-a33c4bcfe013" />
 
 # FIFO
-// write verilog code for FIFO
+// **write verilog code for FIFO**
+`timescale 1ns/1ps
 
-// Test bench
+module FIFO(
+    input clk,
+    input rst,
+    input wr,
+    input rd,
+    input [7:0] data_in,
+    output reg [7:0] data_out
+);
 
-// output Waveform
+reg [7:0] mem[0:3];
+reg [1:0] wptr, rptr;
+
+always @(posedge clk)
+begin
+
+    if(rst)
+    begin
+    wptr <= 0;
+        rptr <= 0;
+    end
+    else
+    begin
+        // Write Operation
+        if(wr)
+        begin
+            mem[wptr] <= data_in;
+            wptr <= wptr + 1;
+        end
+        // Read Operation
+        if(rd)
+        begin
+            data_out <= mem[rptr];
+            rptr <= rptr + 1;
+        end
+    end
+end
+endmodule
+**// Test bench**
+
+`timescale 1ns/1ps
+
+module tb_FIFO;
+
+reg clk;
+reg rst;
+reg wr;
+reg rd;
+reg [7:0] data_in;
+
+wire [7:0] data_out;
+
+FIFO uut(
+
+.clk(clk),
+.rst(rst),
+.wr(wr),
+.rd(rd),
+.data_in(data_in),
+.data_out(data_out)
+
+);
+// Clock Generation
+always #5 clk = ~clk;
+
+initial
+begin
+
+clk = 0;
+rst = 1;
+wr = 0;
+rd = 0;
+data_in = 0;
+
+#10;
+rst = 0;
+
+//----------------------
+// Write Data
+//----------------------
+
+#10;
+wr = 1;
+data_in = 8'd10;
+#10;
+data_in = 8'd20;
+
+#10;
+data_in = 8'd30;
+
+#10;
+data_in = 8'd40;
+
+#10;
+wr = 0;
+
+//----------------------
+// Read Data
+//----------------------
+
+#10;
+rd = 1;
+
+#40;
+rd = 0;
+#20;
+
+$finish;
+
+end
+
+initial
+begin
+
+$monitor("Time=%0t wr=%b rd=%b data_in=%d data_out=%d wptr=%d rptr=%d",
+
+          $time,
+          wr,
+          rd,
+          data_in,
+          data_out,
+          uut.wptr,
+          uut.rptr);
+
+end
+
+endmodule
+
+/**/ output Waveform**
+
+<img width="1558" height="790" alt="image" src="https://github.com/user-attachments/assets/b5573c42-acc2-41e5-8b69-89379280d7cc" />
 
 # Conclusion
 The RAM, ROM, FIFO memory with read and write operations was designed and successfully simulated using Verilog HDL. The testbench verified both the write and read functionalities by simulating the memory operations and observing the output waveforms. The experiment demonstrates how to implement memory operations in Verilog, effectively modeling both the reading and writing processes.
